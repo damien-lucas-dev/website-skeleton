@@ -30,6 +30,8 @@ class VilleController extends AbstractController
      */
     public function new(Request $request): Response
     {
+        $this->denyAccessUnlessGranted("ROLE_ADMIN");
+
         $ville = new Ville();
         $form = $this->createForm(VilleType::class, $ville);
         $form->handleRequest($request);
@@ -63,6 +65,8 @@ class VilleController extends AbstractController
      */
     public function edit(Request $request, Ville $ville): Response
     {
+        $this->denyAccessUnlessGranted("ROLE_ADMIN");
+
         $form = $this->createForm(VilleType::class, $ville);
         $form->handleRequest($request);
 

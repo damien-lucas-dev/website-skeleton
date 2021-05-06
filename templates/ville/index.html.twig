@@ -22,7 +22,9 @@
                 <td>{{ ville.codePostal }}</td>
                 <td>
                     <a href="{{ path('ville_show', {'id': ville.id}) }}">show</a>
-                    <a href="{{ path('ville_edit', {'id': ville.id}) }}">edit</a>
+                    {% if is_granted("ROLE_ADMIN") %}
+                        <a href="{{ path('ville_edit', {'id': ville.id}) }}">edit</a>
+                    {% endif %}
                 </td>
             </tr>
         {% else %}
@@ -33,5 +35,7 @@
         </tbody>
     </table>
 
-    <a href="{{ path('ville_new') }}">Create new</a>
+    {% if is_granted("ROLE_ADMIN") %}
+        <a href="{{ path('ville_new') }}">Create new</a>
+    {% endif %}
 {% endblock %}

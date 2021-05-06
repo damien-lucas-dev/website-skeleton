@@ -50,5 +50,8 @@
 
     <a href="{{ path('utilisateur_edit', {'id': utilisateur.id}) }}">edit</a>
 
-    {{ include('utilisateur/_delete_form.html.twig') }}
+    {% if is_granted("ROLE_ADMIN") %}
+        {{ include('utilisateur/_delete_form.html.twig') }}
+    {% endif %}
+
 {% endblock %}
