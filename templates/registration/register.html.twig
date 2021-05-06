@@ -1,0 +1,40 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Register{% endblock %}
+
+{% block stylesheets %}{{ parent() }}
+    <style>
+        form {
+
+        }
+        form input {
+            display: inline-block;
+            margin-left: 5px;
+            width: 150px;
+        }
+
+    </style>
+{% endblock %}
+
+{% block body %}
+    {% for flashError in app.flashes('verify_email_error') %}
+        <div class="alert alert-danger" role="alert">{{ flashError }}</div>
+    {% endfor %}
+
+    <h1>Inscrire un utilisateur</h1>
+
+    {{ form_start(registrationForm) }}
+    {{ form_row(registrationForm.campus) }}
+    {{ form_row(registrationForm.email) }}
+    {{ form_row(registrationForm.plainPassword, {
+        label: 'Password'
+    }) }}
+    {{ form_row(registrationForm.nom) }}
+    {{ form_row(registrationForm.prenom) }}
+    {{ form_row(registrationForm.telephone) }}
+    {{ form_row(registrationForm.administrateur) }}
+    {{ form_row(registrationForm.actif) }}
+
+        <button type="submit" class="btn">Inscrire</button>
+    {{ form_end(registrationForm) }}
+{% endblock %}

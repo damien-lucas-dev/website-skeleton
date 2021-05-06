@@ -1,0 +1,35 @@
+<style>
+#logo {
+    float: left;
+    width: 400px;
+    height: 200px;
+    border: 2px solid black;
+    margin: 10px;
+}
+.nav ul li {
+    display: inline-block;
+    list-style-type: none;
+    margin: 0 1em 0 1em;
+}
+.nav a {
+    text-decoration: none;
+}
+.nav a:hover {
+    text-decoration: underline;
+}
+</style>
+<div class="container">
+
+        <div id="logo"></div>
+        <nav class="nav">
+            <ul>
+                {% if app.user %}
+                    <li><a href="{{ path('app_register') }}">Inscrire un utilisateur</a></li>
+                    <li><a href="{{ path('app_logout') }}">Logout ({{ app.user.prenom }} {{ app.user.nom }})</a></li>
+                {% else %}
+                    <li><a href="{{ path('app_login') }}">Login</a></li>
+                {% endif %}
+
+            </ul>
+        </nav>
+</div>
