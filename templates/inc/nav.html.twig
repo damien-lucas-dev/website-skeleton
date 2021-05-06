@@ -1,11 +1,4 @@
 <style>
-#logo {
-    float: left;
-    width: 400px;
-    height: 200px;
-    border: 2px solid black;
-    margin: 10px;
-}
 .nav ul li {
     display: inline-block;
     list-style-type: none;
@@ -20,11 +13,12 @@
 </style>
 <div class="container">
 
-        <!--<div id="logo"></div>-->
         <nav class="nav">
             <ul>
+                <li><a href="{{ path('main_home') }}">Accueil</a></li>
                 {% if app.user %}
                     {% if is_granted("ROLE_ADMIN") %}
+                        <li><a href="{{ path('admin_dashboard') }}">Panneau d'administration</a></li>
                         <li><a href="{{ path('app_register') }}">Inscrire un utilisateur</a></li>
                     {% endif %}
                     <li><a href="{{ path('utilisateur_profil_modifier') }}">Mon profil</a></li>

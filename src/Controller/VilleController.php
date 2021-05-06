@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Route("/ville")
+ * @Route("/admin/ville")
  */
 class VilleController extends AbstractController
 {
@@ -87,6 +87,8 @@ class VilleController extends AbstractController
      */
     public function delete(Request $request, Ville $ville): Response
     {
+        $this->denyAccessUnlessGranted("ROLE_ADMIN");
+
         if ($this->isCsrfTokenValid('delete'.$ville->getId(), $request->request->get('_token'))) {
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->remove($ville);

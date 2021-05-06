@@ -1,20 +1,112 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello AdminController!{% endblock %}
+
+{% block title %}{{ parent() }}Panneau d'administration{% endblock %}
+
+
+{% block stylesheets %}
+    <style>
+        nav#admin-dashboard a {
+            color: white;
+            text-decoration: none;
+        }
+        nav#admin-dashboard a:hover {
+            color: white;
+            text-decoration: underline;
+            text-decoration-style: revert;
+            text-underline-offset:.6ex;
+            text-underline-color: #AAAAAA;
+        }
+    </style>
+{% endblock %}
+
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
+    <h1>Panneau d'administration</h1>
 
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
 
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code><a href="{{ 'C:/wamp64/www/website-skeleton/src/Controller/AdminController.php'|file_link(0) }}">src/Controller/AdminController.php</a></code></li>
-        <li>Your template at <code><a href="{{ 'C:/wamp64/www/website-skeleton/templates/admin/index.html.twig'|file_link(0) }}">templates/admin/index.html.twig</a></code></li>
-    </ul>
-</div>
+    <nav id="admin-dashboard" class="d-inline-flex">
+        <div class="card text-white bg-primary m-3" style="max-width: 18rem;">
+            <div class="card-header"><h5>Gestion des utilisateur</h5></div>
+            <div class="card-body">
+                <!--<h5 class="card-title">Primary card title</h5>-->
+                <p class="card-text text-white">
+                    <ul>
+                        <li><a href="{{ path('app_register') }}">Inscrire un nouvel utilisateur</a></li>
+                        <li><a href="{{ path('utilisateur_index') }}"><h6>Consulter la liste</h6>
+                                <ul>
+                                    <li>Rechercher</li>
+                                    <li>Modifier des information</li>
+                                    <li>Modifier le statut Administrateur</li>
+                                    <li>Changer l'état (actif/inactif)</li>
+                                </ul>
+                            </a></li>
+                    </ul>
+                </p>
+            </div>
+        </div>
+        <div class="card text-white bg-primary m-3" style="max-width: 18rem;">
+            <div class="card-header"><h5>Gestion des <em>villes</em> et des <em>lieux</em></h5></div>
+            <div class="card-body">
+                <!--<h5 class="card-title">Primary card title</h5>-->
+                <p class="card-text text-white">
+                <ul>
+                    <li><a href="{{ path('ville_new') }}">Ajouter une ville</a></li>
+                    <li><a href="{{ path('lieu_new') }}">Ajouter un lieu (correspondant à une <em>ville</em>)</a></li>
+                    <li><a href="{{ path('ville_index') }}"><h6>Consulter la liste des villes</h6>
+                            <ul>
+                                <li>Rechercher</li>
+                                <li>Modifier les détails</li>
+                                <li>Supprimer une ville</li>
+                            </ul>
+                        </a></li>
+                    <li><a href="{{ path('lieu_index') }}"><h6>Consulter la liste des lieux</h6>
+                            <ul>
+                                <li>Rechercher</li>
+                                <li>Modifier les détails</li>
+                                <li>Supprimer un lieu</li>
+                            </ul>
+                        </a></li>
+                </ul>
+                </p>
+            </div>
+        </div>
+        <div class="card text-white bg-primary m-3" style="max-width: 18rem;">
+            <div class="card-header"><h5>Gestion des Campus</h5></div>
+            <div class="card-body">
+                <!--<h5 class="card-title">Primary card title</h5>-->
+                <p class="card-text text-white">
+                <ul>
+                    <li><a href="{{ path('campus_new') }}">Ajouter un campus</a></li>
+                    <li><a href="{{ path('campus_index') }}"><h6>Consulter la liste</h6>
+                            <ul>
+                                <li>Rechercher</li>
+                                <li>Modifier les détails</li>
+                                <li>Supprimer un campus</li>
+                            </ul>
+                        </a></li>
+                </ul>
+                </p>
+            </div>
+        </div>
+        <div class="card text-white bg-primary m-3" style="max-width: 18rem;">
+            <div class="card-header"><h5>Gestion des sorties</h5></div>
+            <div class="card-body">
+                <!--<h5 class="card-title">Primary card title</h5>-->
+                <p class="card-text text-white">
+                <ul>
+                    <li><a href="{{ path('sortie_new') }}">Ajouter une sortie</a></li>
+                    <li><a href="{{ path('sortie_index') }}"><h6>Consulter la liste</h6>
+                            <ul>
+                                <li>Rechercher</li>
+                                <li>Modifier les détails d'une sortie</li>
+                                <li>Supprimer un sortie</li>
+                            </ul>
+                        </a></li>
+                </ul>
+                </p>
+            </div>
+        </div>
+
+    </nav>
 {% endblock %}

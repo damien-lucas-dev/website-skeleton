@@ -13,6 +13,7 @@
                 <th>Rue</th>
                 <th>Latitude</th>
                 <th>Longitude</th>
+                <th>Ville</th>
                 <th>actions</th>
             </tr>
         </thead>
@@ -24,6 +25,7 @@
                 <td>{{ lieu.rue }}</td>
                 <td>{{ lieu.latitude }}</td>
                 <td>{{ lieu.longitude }}</td>
+                <td>{{ lieu.ville.nom }}</td>
                 <td>
                     <a href="{{ path('lieu_show', {'id': lieu.id}) }}">show</a>
                     <a href="{{ path('lieu_edit', {'id': lieu.id}) }}">edit</a>
