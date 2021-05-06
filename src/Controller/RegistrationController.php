@@ -30,7 +30,7 @@ class RegistrationController extends AbstractController
                 )
             );
 
-
+            // Gestion des checkboxes Admin & Actif
             $data = $form->getData();
             $isAdmin = $data->getAdministrateur();
 
@@ -40,12 +40,19 @@ class RegistrationController extends AbstractController
                 $user->setRoles(["ROLE_USER"]);
             }
 
+            $isActif = $data->getActif();
+
+            if ($isActif) {
+                $user->setActif(true);
+            }
+
+
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($user);
             $entityManager->flush();
             // do anything else you need here, like send an email
 
-            //return $this->redirectToRoute('main_home');
+            return $this->redirectToRoute('main_home');
         }
 
         return $this->render('registration/register.html.twig', [
