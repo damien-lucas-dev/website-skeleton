@@ -60,11 +60,17 @@ class UtilisateurType extends AbstractType
             ])
             ->add('administrateur', CheckboxType::class, [
                 'label' => 'Administrateur',
-                'required' => false
+                'required' => false,
+                'attr' => [
+                    'class' => 'form-check-input'
+                ]
             ])
             ->add('actif', CheckboxType::class, [
                 'label' => 'Actif',
-                'required' => false
+                'required' => false,
+                'attr' => [
+                    'class' => 'form-check-input'
+                ]
             ])
         ;
     }

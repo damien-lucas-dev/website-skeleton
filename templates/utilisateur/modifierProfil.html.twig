@@ -1,0 +1,11 @@
+{% extends'base.html.twig' %}
+
+{% block title %}Modifier mon profil{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h1>Modification du profil de {{ app.user.prenom }} {{ app.user.nom }}</h1>
+            {{ form(form) }}
+        <a class="btn btn-secondary" href="{{ path('utilisateur_pass_modifier') }}">Modifier mon mot de passe</a>
+    </div>
+{% endblock %}

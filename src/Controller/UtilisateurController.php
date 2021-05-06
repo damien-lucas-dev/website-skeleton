@@ -3,12 +3,14 @@
 namespace App\Controller;
 
 use App\Entity\Utilisateur;
+use App\Form\EditProfileType;
 use App\Form\UtilisateurType;
 use App\Repository\UtilisateurRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 /**
  * @Route("/utilisateur")
@@ -76,6 +78,62 @@ class UtilisateurController extends AbstractController
             'utilisateur' => $utilisateur,
             'form' => $form->createView(),
         ]);
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////
+    /// Module pour consulter son profil et le modifier
+    /// Et pour changer son mot de passe
+    //////////////////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * @Route("/profil/modifier", name="utilisateur_profil_modifier", methods={"GET","POST"})
+     */
+    public function modifierProfil(Request $request): Response
+    {
+        $utilisateur = $this->getUser();
+
+        $form = $this->createForm(EditProfileType::class, $utilisateur);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($utilisateur);
+            $em->flush();
+
+            $this->addFlash('success', 'Profil mis à jour');
+            return $this->redirectToRoute('main_home');
+        }
+
+        return $this->render('utilisateur/modifierProfil.html.twig', [
+            'utilisateur' => $utilisateur,
+            'form' => $form->createView(),
+        ]);
+    }
+
+    /**
+     * @Route("/pass/modifier", name="utilisateur_pass_modifier", methods={"GET","POST"})
+     */
+    public function modifierPass(Request $request, UserPasswordEncoderInterface $encoder): Response
+    {
+        if ($request->isMethod('POST'))
+        {
+            $em = $this->getDoctrine()->getManager();
+
+            $user = $this->getUser();
+
+            // On vérifie si les deux mdp sont identitques :
+            if ($request->request->get('pass') == $request->request->get('pass2'))
+            {
+                $user->setPassword($encoder->encodePassword($user, $request->request->get('pass')));
+                $em->flush();
+                $this->addFlash('success', 'Mot de passe mis à jour avec succès !');
+            } else {
+                $this->addFlash('error', 'Les deux mots de passes ne sont pas identiques');
+            }
+
+        }
+
+       return $this->render('utilisateur/editPass.html.twig');
     }
 
     /**
