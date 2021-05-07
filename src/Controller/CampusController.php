@@ -66,6 +66,7 @@ class CampusController extends AbstractController
         $form = $this->createForm(CampusType::class, $campus);
         $form->handleRequest($request);
 
+
         if ($form->isSubmitted() && $form->isValid()) {
             $this->getDoctrine()->getManager()->flush();
 

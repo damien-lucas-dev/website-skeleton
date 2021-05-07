@@ -28,7 +28,7 @@ class SortieType extends AbstractType
             ->add('duree', IntegerType::class, [
                 'label' => 'Durée'
             ])
-            ->add('dateLimiteInscription', DateTimeType::class, [
+            ->add('dateLimiteInscription', DateType::class, [
                 'label' => 'Date et heure de fin'
             ])
             ->add('nbInscriptionsMax', IntegerType::class, [
