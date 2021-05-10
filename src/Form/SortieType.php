@@ -12,6 +12,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
@@ -36,7 +37,6 @@ class SortieType extends AbstractType
             ->add('dateHeureDebut', DateTimeType::class, [
                 'label' => 'Date et heure de début',
                 'data' => new \DateTime(),
-                'html5' => true,
                 'attr' => [
                     'class' => 'form-control'
                 ]
@@ -48,7 +48,6 @@ class SortieType extends AbstractType
             ->add('dateLimiteInscription', DateType::class, [
                 'label' => 'Date et heure de fin',
                 'data' => new \DateTime(),
-                'html5' => true,
                 'attr' => ['class' => 'form-control']
             ])
             ->add('nbInscriptionsMax', IntegerType::class, [
@@ -81,49 +80,12 @@ class SortieType extends AbstractType
                 'choice_label' => 'nom',
                 'placeholder' => 'Sélectionnez une ville',
                 'mapped' => false,
-//                'choice_label' => 'nom',
-//                'query_builder' => function (EntityRepository $repository) {
-//                    return $repository->createQueryBuilder('v')->orderBy('v.nom', 'ASC');
-//                },
                 'required' => false
             ])
-            ->add('lieu', EntityType::class, [
-            'class' => Lieu::class,
+            ->add('lieu', ChoiceType::class, [
             'choices' => [],
-            'mapped' => true,
+            'mapped' => false,
         ]);
-        /*$builder->get('ville')->addEventListener(
-            FormEvents::POST_SUBMIT,
-            function (FormEvent $event) {
-                $form = $event->getForm();
-                $this->addLieuxField($form->getParent(), $form->getData());
-            }
-        );*/
-    }
-
-    private function addLieuxField(FormInterface $form, ?Ville $ville)
-    {
-        $form->add('lieu', EntityType::class, [
-            'class' => Lieu::class,
-            'placeholder' => $ville ? 'Sélectionnez un lieu' : 'Sélectionnez une ville !',
-            'choices' => $ville ? $ville->getLieux() : []
-        ]);
-        /*
-        $builder = $form->getConfig()->getFormFactory()->createNamedBuilder(
-            'lieu',
-            EntityType::class,
-            null,
-            [
-                'class' => 'App\Entity\Lieu',
-                'placeholder' => 'Sélectionnez le lieu',
-                'required' => true,
-                'mapped' => true,
-                'auto_initialize' => false,
-                'choices' => $ville->getLieux()
-            ]
-        );
-        $form->add($builder->getForm());
-        */
     }
 
     public function configureOptions(OptionsResolver $resolver)

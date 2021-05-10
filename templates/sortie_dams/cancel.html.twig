@@ -1,0 +1,12 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    Annuler une sortie
+{% endblock %}
+
+{% block body %}
+    <p>Souhaitez vous vraiment annuler cette sortie ?</p>
+    <span class="m-3"><a href="{{ path('sortied_cancel', {'id': id}) }}" class="btn btn-outline-danger">Oui</a></span>
+    <span class="m-3"><a href="{{ path('sortied_afficher') }}" class="btn btn-outline-secondary">Non !</a></span>
+{% endblock %}
+

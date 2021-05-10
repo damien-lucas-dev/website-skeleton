@@ -7,7 +7,7 @@ $(document).on('change', '#sortie_ville', function () {
     console.log($target);
 
     // Les données à envoyer en Ajax
-    let ville = $field.val();
+    let ville = {'ville': $field.val()};
 
     console.log(ville);
 
@@ -28,7 +28,7 @@ $(document).on('change', '#sortie_ville', function () {
 
         success: function (data)
         {
-            // console.log(data);
+            console.log(data);
 
             // initialise une variable sHtml
             // dans laquelle on va construire le HTML �  afficher

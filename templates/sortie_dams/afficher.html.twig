@@ -63,7 +63,11 @@
                     <td>{{ sortie.lieu.ville.nom }}</td>
                     <td>{{ sortie.duree }} minutes</td>
                     <td>avant le {{ sortie.dateLimiteInscription | date('d/m/Y') }}</td>
-                    <td><a href="{{ path('sortied_subscribe', {id: sortie.id}) }}" class="btn btn-outline-info">S'inscrire !</a></td>
+                    <td>
+                        {% if sortie.orga.id != app.user.id %}
+                            <a href="{{ path('sortied_subscribe', {id: sortie.id}) }}" class="btn btn-outline-info">S'inscrire !</a>
+                        {% endif %}
+                    </td>
                 </tr>
             {% endfor %}
             </tbody>

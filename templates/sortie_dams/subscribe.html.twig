@@ -12,5 +12,6 @@ Participer à une sortie
     <p>Vous êtes bien inscrit à la sortie {{ sortie.nom }} qui commence
         le {{ sortie.dateHeureDebut | date('d/m/Y') }} à {{ sortie.dateHeureDebut | date('H:i') }}.</p>
     <p>Il reste maintenant <strong>{{ nbPlacesRestantes }}</strong> places.</p>
+    <a href="{{ path('sortied_afficher') }}">Retour à la liste</a>
 {% endblock %}
 
