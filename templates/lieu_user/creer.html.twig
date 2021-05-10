@@ -1,0 +1,49 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+    <style>
+        #__container {
+            padding-top:50px;
+        }
+
+        #__submit-btn {
+            text-decoration: none;
+        }
+
+        #__submit-btn:hover {
+            color:white;
+        }
+
+        .form-control {
+            margin: 5px 0 5px 0;
+        }
+
+        #__sub-container {
+            padding-bottom: 30px;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <div id="__container" class="container col-md-9 col-3">
+
+        {{ form_start(form) }}
+        {{ form_label(form.nom) }}{{ form_widget(form.nom) }}
+        {{ form_row(form.rue) }}
+        {{ form_row(form.latitude) }}
+        {{ form_row(form.longitude) }}
+        {{ form_row(form.ville) }}
+    </div>
+    <div id="__sub-container-footer" class="form-row">
+        <button type="submit" id="__submit-btn" class="btn btn-link btn-outline-primary">VALIDER ET AJOUTER 😎</button>
+    </div>
+    {{ form_row(form._token) }}
+    </form>
+
+    </div>
+{% endblock %}
+
+{% block title %}
+    Ajouter un nouveau lieu
+{% endblock %}
+

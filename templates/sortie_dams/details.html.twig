@@ -1,0 +1,55 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+Détails
+{% endblock %}
+
+{% block body %}
+    <table class="table" id="__tb-sortie">
+        <tr>
+            <td>Sortie</td>
+            <td><a href="#">{{ sortie.nom }}</a></td>
+        </tr>
+        <tr>
+            <td>Date/Heure</td>
+            <td>le {{ sortie.dateHeureDebut | date('d/m/Y \à H:i') }}</td>
+        </tr>
+        <tr>
+            <td>Etat</td>
+            <td>{{ sortie.etat.libelle }}</td>
+        </tr>
+        <tr>
+            <td>Organisateur</td>
+            <td><a href="#" title="Afficher profil">{{ sortie.orga.prenom }} {{ sortie.orga.nom }}</a></td>
+        </tr>
+        <tr>
+            <td>Lieu</td>
+            <td>{{ sortie.lieu.nom }}</td>
+        </tr>
+        <tr>
+            <td>Ville</td>
+            <td>{{ sortie.lieu.ville.nom }}</td>
+        </tr>
+        <tr>
+            <td>Durée</td>
+            <td>{{ sortie.duree }} minutes</td>
+        </tr>
+        <tr
+        ><td>Date limite d'inscription</td>
+            <td>avant le {{ sortie.dateLimiteInscription | date('d/m/Y') }}</td>
+        </tr>
+        <tr>
+            <td>S'inscrire</td>
+            <td><a href="{{ path('sortied_subscribe', {id: sortie.id}) }}" class="btn btn-outline-info">S'inscrire !</a></td>
+        </tr>
+    </table>
+    <table id="__tb-particip" class="table">
+        {% for participant in participants %}
+            <tr>
+                <td>{{ participant.nom }} {{ participant.prenom }}</td>
+                <td>{{ participant.campus }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}
+

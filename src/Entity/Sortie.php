@@ -192,16 +192,16 @@ class Sortie
         return $this->participants;
     }
 
-    public function addParticipant(Utilisateur $participant): self
+    public function addParticipant(UserInterface $participant): self
     {
-        if (!$this->participants->contains($participant)) {
+        if (!$this->participants->contains($participant) && count($this->participants) < $this->nbInscriptionsMax) {
             $this->participants[] = $participant;
         }
 
         return $this;
     }
 
-    public function removeParticipant(Utilisateur $participant): self
+    public function removeParticipant(UserInterface $participant): self
     {
         $this->participants->removeElement($participant);
 

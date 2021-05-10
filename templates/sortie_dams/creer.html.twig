@@ -1,0 +1,65 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+    <style>
+        #__container {
+            padding-top:50px;
+        }
+
+        #__submit-btn {
+            text-decoration: none;
+        }
+
+        #__submit-btn:hover {
+            color:white;
+        }
+
+        .form-control {
+            margin: 5px 0 5px 0;
+        }
+
+        #__sub-container {
+            padding-bottom: 30px;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <h1>😎 Qu'allez vous faire ce week-end ? <s>(ou cette semaine 😁)</s></h1>
+    <h2>Proposer une sortie :</h2>
+
+    <div id="__container" class="container col-md-9 col-3">
+        <div id="__sub-container">
+            {{ form_start(form) }}
+            {{ form_label(form.nom) }}{{ form_widget(form.nom) }}
+            {{ form_row(form.dateHeureDebut) }}
+            {{ form_row(form.duree) }}
+            {{ form_row(form.dateLimiteInscription) }}
+            {{ form_row(form.nbInscriptionsMax) }}
+            {{ form_row(form.infosSortie) }}
+            {{ form_row(form.campus) }}
+            <div id="appbundle_sortie_ville">
+                {{ form_row(form.ville) }}
+            </div>
+            <div id="appbundle_sortie_lieu">
+                {{ form_row(form.lieu) }}
+            </div>
+
+        </div>
+        <div id="__sub-container-footer" class="form-row">
+            <a href="{{ path('lieu_user_create') }}" class="btn btn-primary">⨁ Ajouter un lieu non présent dans la liste</a>
+            <button type="submit" id="__submit-btn" class="btn btn-link btn-outline-primary">VALIDER ET SORTIR ! (.com 😎)</button>
+        </div>
+        {{ form_row(form._token) }}
+        </form>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script src="{{ asset('js/app.js') }}"></script>
+{% endblock %}
+
+{% block title %}
+    Proposer une nouvelle sortie
+{% endblock %}
+

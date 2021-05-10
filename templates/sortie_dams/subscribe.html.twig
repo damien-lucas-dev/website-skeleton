@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+
+{% endblock %}
+
+{% block title %}
+Participer à une sortie
+{% endblock %}
+
+{% block body %}
+    <p>Vous êtes bien inscrit à la sortie {{ sortie.nom }} qui commence
+        le {{ sortie.dateHeureDebut | date('d/m/Y') }} à {{ sortie.dateHeureDebut | date('H:i') }}.</p>
+    <p>Il reste maintenant <strong>{{ nbPlacesRestantes }}</strong> places.</p>
+{% endblock %}
+
