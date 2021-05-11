@@ -28,8 +28,11 @@ class SortieUserController extends AbstractController
     /**
      * @Route("/afficher", name="sortied_afficher")
      */
-    public function afficher(Request $request): Response
+    public function afficher(Request $request, SortieService $sortieService): Response
     {
+        // Tâche qui vérifie et modifie si nécessaire les états des sorties en bdd (méthode gourmande en requêtes....)
+        $sortieService->checkAndChangeSortiesStates();
+
         $search = new PropertySearch();
         $form = $this->createForm(FilterType::class, $search);
         $form->handleRequest($request);

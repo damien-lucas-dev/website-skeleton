@@ -58,6 +58,19 @@ class SortieRepository extends ServiceEntityRepository
         return $query->getQuery()
                     ->getResult();
     }
+
+    /**
+     * @return Sortie|Sortie[]
+     */
+    public function findSortiesNotPassedOrCancelled()
+    {
+        return $this->createQueryBuilder('s')
+            ->andWhere('s.etat < :etat')
+            ->setParameter('etat', SortieService::PASSEE)
+            ->getQuery()
+            ->getResult();
+    }
+
     // /**
     //  * @return Sortie[] Returns an array of Sortie objects
     //  */
