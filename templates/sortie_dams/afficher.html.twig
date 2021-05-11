@@ -80,50 +80,10 @@
                 {{ form_end(form) }}
             </div>
         </div>
-        <table class="table table-bordered table-hover table-striped">
-            <thead>
-                <tr>
-                    <th>Sortie</th>
-                    <th>Date/Heure</th>
-                    <th>Etat</th>
-                    <th>Organisateur</th>
-                    <th>Lieu</th>
-                    <th>Ville</th>
-                    <th>Durée</th>
-                    <th>Date limite d'inscription</th>
-                    <th>Places restantes</th>
-                    <th>S'inscrire</th>
-                </tr>
-            </thead>
-            <tbody>
-            {% for sortie in listeSorties %}
-                <tr>
-                    <td><a href="{{ path('sortied_details', {'id': sortie.id}) }}">{{ sortie.nom }}</a></td>
-                    <td>le {{ sortie.dateHeureDebut | date('d/m/Y \à H:i') }}</td>
-                    <td>{{ sortie.etat.libelle }}</td>
-                    <td><a href="#" title="Afficher profil">{{ sortie.orga.prenom }} {{ sortie.orga.nom }}</a></td>
-                    <td>{{ sortie.lieu.nom }}</td>
-                    <td>{{ sortie.lieu.ville.nom }}</td>
-                    <td>{{ sortie.duree }} minutes</td>
-                    <td>avant le {{ sortie.dateLimiteInscription | date('d/m/Y') }}</td>
-                    <td>{% set placesRest = sortie.nbInscriptionsMax - sortie.participants.count %}{{ placesRest }} sur {{ sortie.nbInscriptionsMax }}</td>
-                    <td>
-                        {% if sortie.orga.id != app.user.id %}
-                            <a href="{{ path('sortied_subscribe', {id: sortie.id}) }}" class="btn btn-info">S'inscrire !</a>
-                        {% endif %}
-                        {% if sortie.orga.id == app.user.id %}
-                            <a href="{{ path('sortied_details', {id: sortie.id}) }}" class="btn btn-secondary">Consulter</a><br>
-                            <a href="{{ path('sortied_ask_cancel', {id: sortie.id}) }}" class="btn btn-outline-danger">Annuler</a>
-                        {% endif %}
-                        {% if sortie.participants.contains(app.user) %}
-                            <a href="{{ path('sortied_cancel_subscription', {id: sortie.id}) }}" class="btn btn-outline-danger">Annuler ma participation</a>
-                        {% endif %}
-                    </td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-        <a href="{{ path('sortied_creer') }}" class="btn btn-outline-info col-3 mb-3">Proposer une nouvelle sortie</a>
+        <div style="margin: 10px 0 10px;">
+            <a class="btn-lg btn-primary" style="color:white; text-decoration:none;" href="{{ path('sortied_mesSorties') }}">Mes sorties</a>
+        </div>
+        {% include('sortie_dams/_tableSorties.html.twig') %}
     </div>
 {% endblock %}
 

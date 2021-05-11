@@ -8,7 +8,10 @@ Détails
     <style>
 
     </style>
-    <div class="row">
+    {% if sortie.orga.id == app.user.id %}
+        <div class="alert alert-secondary w-75"><p class="text-success">C'est votre sortie</p></div>
+    {% endif %}
+    <div class="row mb-5">
         <div class="col">
             <table class="table" id="__tb-sortie">
                 <thead>
@@ -24,7 +27,8 @@ Détails
                 </tr>
                 <tr>
                     <td>Etat</td>
-                    <td>{{ sortie.etat.libelle }}</td>
+                    <td {% if sortie.etat.id == 6 %}style="color:red;font-weight:bold;"{% endif %}
+                    >{{ sortie.etat.libelle }}</td>
                 </tr>
                 <tr>
                     <td>Organisateur</td>
@@ -42,8 +46,8 @@ Détails
                     <td>Durée</td>
                     <td>{{ sortie.duree }} minutes</td>
                 </tr>
-                <tr
-                ><td>Date limite d'inscription</td>
+                <tr>
+                    <td>Date limite d'inscription</td>
                     <td>avant le {{ sortie.dateLimiteInscription | date('d/m/Y') }}</td>
                 </tr>
                 {% if sortie.orga.id != app.user.id %}
@@ -52,31 +56,84 @@ Détails
                     <td><a href="{{ path('sortied_subscribe', {id: sortie.id}) }}" class="btn btn-outline-info">S'inscrire !</a></td>
                 </tr>
                 {% endif %}
+                {% set ETAT_OUVERTE = 2 %}
+                {% if sortie.orga.id == app.user.id and sortie.etat.id < ETAT_OUVERTE %}
+                    <tr>
+                        <td>Publier la sortie</td>
+                        <td><a href="{{ path('sortied_publish', {'id': sortie.id}) }}">Publier</a></td>
+                    </tr>
+                {% endif %}
             </table>
         </div>
-        <div class="card m-3 col-3">
+        <div class="col-3" style="border-left: 1px solid black;">
             <div class="card-header"><h4>Description de la sortie</h4></div>
             <div class="card-body">{{ sortie.infosSortie }}</div>
         </div>
-        <div class="col">
+        <div class="col" style="border-left: 1px solid black;">
+            {% if sortie.etat.id != 6 %}
             <table id="__tb-particip" class="table table-striped table-dark">
                 <thead>
                     <h4 style="font-variant: small-caps">Participants</h4>
                 </thead>
+                <tbody>
+                {% if sortie.participants.count == 0 %}
+                    <span class="text-danger">Personne n'est inscrit pour le moment<br>🤔</span>
+                {% endif %}
                 {% for participant in participants %}
                     <tr>
                         <td>{{ participant.nom }} {{ participant.prenom }}</td>
                         <td>{{ participant.campus.nom }}</td>
                     </tr>
                 {% endfor %}
+                </tbody>
             </table>
+            {% else %}
+                <h4 class="text-danger">Sortie annulée !</h4>
+                <p class="text-danger" style="{% if annulation.raison == '' %} text-align:center; {% endif %} padding-top:3rem; font-style: italic;"
+                >{{ annulation.raison ? annulation.raison : 'Aucune justification donnée par l\'organisateur. Nous nous excusons à sa place...🙏' }}</p>
+                <p>{{ annulation.datetime | date('d/m/Y \à H:i') }}</p>
+            {% endif %}
         </div>
     </div>
     {% if sortie.orga.id == app.user.id %}
-        <div class="alert alert-success"><p class="text-success">C'est votre sortie</p></div>
-        <div>
+        <!--div class="alert alert-secondary w-75"><p class="text-success">C'est votre sortie</p></div-->
+
+        {% if sortie.annulations.count > 0 %}
+            <style>
+                caption {
+                    caption-side: top;
+                    font-size: 1.3em;
+                }
+                table a {
+                    color:black;
+                }
+                table tr td:first-child {
+                    color: grey;
+                }
+            </style>
+
+            <table class="table table-danger w-75 mb-3">
+                <caption>Liste des annulations</caption>
+                <thead>
+                    <th>Identité</th>
+                    <th>Raison</th>
+                </thead>
+                <tbody>
+                    {% for annulation in sortie.annulations %}
+                        <tr>
+                            <td><a href="{{ path('utilisateur_show', {'id': annulation.utilisateur.id}) }}">{{ annulation.utilisateur.prenom }} {{ annulation.utilisateur.nom }}</a></td>
+                            <td>{{ annulation.raison }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+        <div class="mb-3">
             <a href="{{ path('sortied_ask_cancel', {'id': sortie.id}) }}" class="btn btn-outline-danger">Annuler la sortie</a>
         </div>
+    {% endif %}
+    {% if sortie.participants.contains(app.user) %}
+        <a href="{{ path('sortied_ask_cancel_subscription', {id: sortie.id}) }}" class="btn btn-outline-danger">Annuler ma participation</a>
     {% endif %}
     <a href="{{ path('sortied_afficher') }}">Retour à la liste</a>
 {% endblock %}

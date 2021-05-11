@@ -6,7 +6,10 @@
 
 {% block body %}
     <p>Souhaitez vous vraiment annuler cette sortie ?</p>
-    <span class="m-3"><a href="{{ path('sortied_cancel', {'id': id}) }}" class="btn btn-outline-danger">Oui</a></span>
+    {{ form_start(form) }}
+    {{ form_row(form.raison) }}
+    <span class="m-3"><button class="btn btn-outline-danger">Oui</button></span>
     <span class="m-3"><a href="{{ path('sortied_afficher') }}" class="btn btn-outline-secondary">Non !</a></span>
+    {{ form_end(form) }}
 {% endblock %}
 

@@ -21,9 +21,36 @@ class SortieRepository extends ServiceEntityRepository
         parent::__construct($registry, Sortie::class);
     }
 
+    public function findSortiesPubliees()
+    {
+        return $this->createQueryBuilder('s')
+            ->where('s.etat > 1') // Sorties publiées
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function findByOwner(int $usrid)
+    {
+        return $this->createQueryBuilder('s')
+            ->where('s.orga = :owner')
+            ->setParameter('owner', $usrid)
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function findParticipations(int $usrid)
+    {
+        return $this->createQueryBuilder('s')
+            ->where(':id MEMBER OF s.participants')
+            ->setParameter('id', $usrid)
+            ->getQuery()
+            ->getResult();
+    }
+
     public function findByFilter(array $filters, int $usrid)
     {
-        $query = $this->createQueryBuilder('s');
+        $query = $this->createQueryBuilder('s')
+                    ->where('s.etat IN (2,3,4)');  // Sorties publiées
         if ($filters['keyword'] != "") {
             $query->andWhere('s.nom LIKE :kw')
                 ->orWhere('s.infosSortie LIKE :kw')
@@ -46,12 +73,12 @@ class SortieRepository extends ServiceEntityRepository
         }
 
         if (array_key_exists('passed', $filters)) {
-            $query->andWhere('s.etat = :passed')
+            $query->orWhere('s.etat = :passed')
                 ->setParameter('passed', SortieService::PASSEE);
         }
 
         if (array_key_exists('cancelled', $filters)) {
-            $query->andWhere('s.etat = :cancelled')
+            $query->orWhere('s.etat = :cancelled')
                 ->setParameter('cancelled', SortieService::ANNULEE);
         }
 
@@ -65,8 +92,10 @@ class SortieRepository extends ServiceEntityRepository
     public function findSortiesNotPassedOrCancelled()
     {
         return $this->createQueryBuilder('s')
-            ->andWhere('s.etat < :etat')
-            ->setParameter('etat', SortieService::PASSEE)
+            ->where('s.etat > :cree')
+            ->setParameter('cree', SortieService::CREEE)
+            ->andWhere('s.etat < :passe')
+            ->setParameter('passe', SortieService::PASSEE)
             ->getQuery()
             ->getResult();
     }

@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    Sorties auxquelles je participe
+{% endblock %}
+
+{% block body %}
+    <h3 class="mb-5">Voici les sorties auxquelles vous êtes inscrit(e) :</h3>
+    {% include('sortie_dams/_tableSorties.html.twig') %}
+{% endblock %}
+

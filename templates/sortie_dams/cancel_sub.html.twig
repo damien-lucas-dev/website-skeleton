@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    Annuler votre participation
+{% endblock %}
+
+{% block body %}
+    <p>Souhaitez vous vraiment annuler votre participation à cette sortie ?</p>
+    {{ form_start(form) }}
+        {{ form_row(form.raison) }}
+
+    <span class="m-3"><button class="btn btn-outline-danger">Oui</button></span>
+    <span class="m-3"><a href="{{ path('sortied_details', {'id': id}) }}" class="btn btn-outline-secondary">Non !</a></span>
+    {{ form_end(form) }}
+{% endblock %}
+

@@ -2,8 +2,10 @@
 
 namespace App\Controller;
 
+use App\Entity\Annulation;
 use App\Entity\PropertySearch;
 use App\Entity\Sortie;
+use App\Form\AnnulationType;
 use App\Form\FilterType;
 use App\Form\SortieType;
 use App\Service\SortieService;
@@ -39,7 +41,7 @@ class SortieUserController extends AbstractController
 
         $em = $this->getDoctrine()->getManager();
         $sortieRepos = $em->getRepository(Sortie::class);
-        $listeSorties = $sortieRepos->findAll();
+        $listeSorties = $sortieRepos->findSortiesNotPassedOrCancelled();
 
         if ($form->isSubmitted() && $form->isValid()) {
             dump($request->get('filter'));
@@ -63,10 +65,28 @@ class SortieUserController extends AbstractController
         $em = $this->getDoctrine()->getManager();
         $sortieRepos = $em->getRepository(Sortie::class);
         $sortie = $sortieRepos->find($id);
+        $annulation = $em->getRepository(Annulation::class)->findAnnulationDeSortie($id, $sortie->getOrga()->getId());
+        dump($annulation);
 
         return $this->render('sortie_dams/details.html.twig', [
             'sortie' => $sortie,
+            'annulation' => $annulation[0],
             'participants' => $sortie->getParticipants()
+        ]);
+    }
+
+    /**
+     * @Route("/mesParticipations", name="sortied_participations")
+     */
+    public function mesParticipations(): Response
+    {
+        $em = $this->getDoctrine()->getManager();
+        $sortieRepos = $em->getRepository(Sortie::class);
+        $sorties = $sortieRepos->findParticipations($this->getUser()->getId());
+        dump($sorties);
+
+        return $this->render('sortie_dams/mesParticipations.html.twig', [
+            'listeSorties' => $sorties
         ]);
     }
 
@@ -89,21 +109,41 @@ class SortieUserController extends AbstractController
             // comme vérifier si il reste des places disponibles par exemple
 
             $sortie->setOrga($this->getUser());
-            //$sortie->setLieu($this->getEntitiesFromIds($form, $em));
-            $sortie->setEtat($entityManager->getRepository('App:Etat')->find(SortieService::OUVERTE));
+
+            //$sortie->setEtat($entityManager->getRepository('App:Etat')->find(SortieService::OUVERTE));
 
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($sortie);
             $entityManager->flush();
 
             $this->addFlash('success', 'Ajouté !');
-            return $this->redirectToRoute('sortied_afficher');
+            return $this->redirectToRoute('sortied_details', ['id' => $sortie->getId()]);
         }
 
         return $this->render('sortie_dams/creer.html.twig', [
             'form' => $form->createView(),
             'sortie' => $sortie
         ]);
+    }
+
+    /**
+     * @Route("/publish/{id}", name="sortied_publish")
+     */
+    public function publierSortie(int $id): Response
+    {
+        $entityManager = $this->getDoctrine()->getManager();
+        $sortie = $entityManager->getRepository('App:Sortie')->find($id);
+
+        if ($sortie->getOrga() == $this->getUser())
+        {
+            $sortie->setEtat($entityManager->getRepository('App:Etat')->find(SortieService::OUVERTE));
+            $entityManager->persist($sortie);
+            $entityManager->flush();
+
+            $this->addFlash('success', 'Sortie publiée !');
+        }
+
+        return $this->redirectToRoute('sortied_afficher');
     }
 
     /**
@@ -171,10 +211,29 @@ class SortieUserController extends AbstractController
     /**
      * @Route("/cancel/{id}", name="sortied_ask_cancel")
      */
-    public function askCancel(int $id): Response
+    public function askCancel(Request $request, int $id): Response
     {
+        $em = $this->getDoctrine()->getManager();
+
+        $annulation = new Annulation();
+        $form = $this->createForm(AnnulationType::class, $annulation);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid())
+        {
+            $annulation->setDatetime(new \DateTime());
+            $annulation->setSortie($em->getRepository('App:Sortie')->find($id));
+            $annulation->setUtilisateur($annulation->getSortie()->getOrga());
+
+            $em->persist($annulation);
+            $em->flush();
+
+            return $this->redirectToRoute('sortied_cancel', ['id' => $id]);
+        }
+
         return $this->render('sortie_dams/cancel.html.twig', [
-            'id' => $id
+            'id' => $id,
+            'form' => $form->createView()
         ]);
     }
 
@@ -210,7 +269,36 @@ class SortieUserController extends AbstractController
     }
 
     /**
-     * @Route("/cancel/subscription/{id}", name="sortied_cancel_subscription")
+     * @Route("/cancel/subscription/{id}", name="sortied_ask_cancel_subscription")
+     */
+    public function askCancelSubscription(Request $request, int $id): Response
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        $annulation = new Annulation();
+        $form = $this->createForm(AnnulationType::class, $annulation);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid())
+        {
+            $annulation->setDatetime(new \DateTime());
+            $annulation->setSortie($em->getRepository('App:Sortie')->find($id));
+            $annulation->setUtilisateur($this->getUser());
+
+            $em->persist($annulation);
+            $em->flush();
+
+            return $this->redirectToRoute('sortied_cancel_subscription', ['id' => $id]);
+        }
+
+        return $this->render('sortie_dams/cancel_sub.html.twig', [
+            'id' => $id,
+            'form' => $form->createView()
+        ]);
+    }
+
+    /**
+     * @Route("/cancel/subscription/yes/{id}", name="sortied_cancel_subscription")
      */
     public function cancelSubscription(int $id, EntityManagerInterface $em): Response
     {
@@ -229,6 +317,18 @@ class SortieUserController extends AbstractController
         }
 
         return $this->redirectToRoute("sortied_afficher");
+    }
+
+    /**
+     * @Route("/mesSorties/", name="sortied_mesSorties")
+     */
+    public function mesSorties(EntityManagerInterface $em): Response
+    {
+        $sorties = $em->getRepository('App:Sortie')->findByOwner($this->getUser()->getId());
+
+        return $this->render('sortie_dams/mesSorties.html.twig', [
+            'listeSorties' => $sorties
+        ]);
     }
 
     /**

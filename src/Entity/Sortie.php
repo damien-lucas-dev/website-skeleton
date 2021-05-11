@@ -78,9 +78,15 @@ class Sortie
      */
     private $lieu;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Annulation::class, mappedBy="sortie", orphanRemoval=true)
+     */
+    private $annulations;
+
     public function __construct()
     {
         $this->participants = new ArrayCollection();
+        $this->annulations = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -228,6 +234,36 @@ class Sortie
     public function setLieu(?Lieu $lieu): self
     {
         $this->lieu = $lieu;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Annulation[]
+     */
+    public function getAnnulations(): Collection
+    {
+        return $this->annulations;
+    }
+
+    public function addAnnulation(Annulation $annulation): self
+    {
+        if (!$this->annulations->contains($annulation)) {
+            $this->annulations[] = $annulation;
+            $annulation->setSortie($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAnnulation(Annulation $annulation): self
+    {
+        if ($this->annulations->removeElement($annulation)) {
+            // set the owning side to null (unless already changed)
+            if ($annulation->getSortie() === $this) {
+                $annulation->setSortie(null);
+            }
+        }
 
         return $this;
     }

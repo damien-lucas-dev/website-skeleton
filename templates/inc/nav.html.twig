@@ -22,6 +22,7 @@
                         <li><a href="{{ path('app_register') }}">Inscrire un utilisateur</a></li>
                     {% endif %}
                     <li><a href="{{ path('sortied_afficher') }}">Afficher les sorties</a></li>
+                    <li><a href="{{ path('sortied_participations') }}">Mes participations</a></li>
                     <li><a href="{{ path('utilisateur_profil_modifier') }}">Mon profil</a></li>
                     <li><a href="{{ path('app_logout') }}">Logout ({{ app.user.prenom }} {{ app.user.nom }})</a></li>
                 {% else %}

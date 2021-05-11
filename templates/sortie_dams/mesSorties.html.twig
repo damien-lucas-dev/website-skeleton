@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    Afficher mes sorties
+{% endblock %}
+
+{% block body %}
+    {% include('sortie_dams/_tableSorties.html.twig') %}
+    <div style="margin: 10px 0 10px;">
+        <a class="btn-lg btn-primary" style="color:white; text-decoration:none;" href="{{ path('sortied_afficher') }}">👈 Retour à la liste</a>
+    </div>
+{% endblock %}
+

@@ -10,6 +10,21 @@
     <link rel="stylesheet" href="{{ asset('bootstrap/css/bootstrap.css') }}">
     <script type="text/javascript" src="{{ asset('js/jquery-3.6.0.min.js') }}"></script>
 
+    <style>
+        h1, h2, h3, h4, h5, h6 {
+            text-shadow: 1px 1px 2px grey;
+        }
+        .btn {
+            box-shadow: 1px 1px 3px grey;
+        }
+        .table {
+            box-shadow: 1px 1px 3px grey;
+        }
+        input, select, textarea {
+            box-shadow: 1px 1px 3px grey;
+            height: 50px;
+        }
+    </style>
     {% block stylesheets %}
 
     {% endblock %}
@@ -25,7 +40,7 @@
 
 <div id="__logoAndTitle">
     <div id="__title" style="float:left;"><p style="writing-mode:vertical-rl; text-orientation:sideways; transform: rotateY(180deg) rotateX(180deg) ;">Sortir.com</p></div>
-    <div id="__logo" style=" width:50px; height:100px; border: 2px solid black; margin: 5px; overflow: hidden;">Sortir.com</div>
+    <div id="__logo" style=" width:68px; height:100px; border: 2px solid black; margin: 5px; overflow: hidden;">Sortir.com</div>
 </div>
 
 <div class="container col-lg-11" style="clear:both;">

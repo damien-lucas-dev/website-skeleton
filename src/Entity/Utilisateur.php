@@ -84,10 +84,16 @@ class Utilisateur implements UserInterface
      */
     private $sortiesOrganisees;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Annulation::class, mappedBy="utilisateur", orphanRemoval=true)
+     */
+    private $annulations;
+
     public function __construct()
     {
         $this->sorties = new ArrayCollection();
         $this->sortiesOrganisees = new ArrayCollection();
+        $this->annulations = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -294,6 +300,36 @@ class Utilisateur implements UserInterface
             // set the owning side to null (unless already changed)
             if ($sortiesOrganisee->getOrga() === $this) {
                 $sortiesOrganisee->setOrga(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Annulation[]
+     */
+    public function getAnnulations(): Collection
+    {
+        return $this->annulations;
+    }
+
+    public function addAnnulation(Annulation $annulation): self
+    {
+        if (!$this->annulations->contains($annulation)) {
+            $this->annulations[] = $annulation;
+            $annulation->setUtilisateur($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAnnulation(Annulation $annulation): self
+    {
+        if ($this->annulations->removeElement($annulation)) {
+            // set the owning side to null (unless already changed)
+            if ($annulation->getUtilisateur() === $this) {
+                $annulation->setUtilisateur(null);
             }
         }
 
