@@ -14,10 +14,10 @@ class MainController extends AbstractController
      */
     public function home(SortieRepository $sortieRepository): Response
     {
-
-        return $this->render('main/home.html.twig', [
+        return $this->redirectToRoute('sortied_afficher');
+        /*return $this->render('main/home.html.twig', [
             'controller_name' => 'MainController',
             'sorties' => $sortieRepository->findAll()
-        ]);
+        ]);*/
     }
 }

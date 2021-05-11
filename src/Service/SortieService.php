@@ -4,6 +4,8 @@
 namespace App\Service;
 
 
+use App\Entity\Sortie;
+use App\Entity\Utilisateur;
 use DateTime;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
@@ -28,13 +30,6 @@ class SortieService
          $this->etatsRep = $em->getRepository('App:Etat');
      }
 
-    function isEditable($sortie, $participant): bool
-    {
-        $isOld = in_array($sortie->getEtat()->getId(), [self::EN_COURS, self::PASSEE, self::ANNULEE]);
-        $isNotOwned = $sortie->getOrganisateur() != $participant;
-        return !$isOld && !$isNotOwned;
-    }
-
     function checkAndChangeSortiesStates()
     {
         $listeSortiesATraiter = $this->sortieRep->findSortiesNotPassedOrCancelled();
@@ -46,6 +41,8 @@ class SortieService
             $this->verifNbParticipants($sortie, $this->em);
             // Vérification EN_COURS
             $this->verifEnCours($sortie, $this->em);
+            // Vérifier les passées
+            $this->verifPassees($sortie, $this->em);
             // Historisation si > 1 mois
             $this->historisationSortiesFiniesDepuisPlusDUnMois($sortie, $this->em);
         }
@@ -56,7 +53,7 @@ class SortieService
      * @param $sortie
      * @param EntityManagerInterface $em
      */
-    public function verifClotureInscriptions($sortie, EntityManagerInterface $em): void
+    public function verifClotureInscriptions(Sortie $sortie, EntityManagerInterface $em): void
     {
         $clotureInscriptions = $sortie->getDateLimiteInscription()->getTimestamp();
         $now = (new \DateTime)->getTimestamp();
@@ -71,7 +68,7 @@ class SortieService
      * @param $sortie
      * @param EntityManagerInterface $em
      */
-    public function verifNbParticipants($sortie, EntityManagerInterface $em): void
+    public function verifNbParticipants(Sortie $sortie, EntityManagerInterface $em): void
     {
         if (count($sortie->getParticipants()) >= $sortie->getNbInscriptionsMax()) {
             $sortie->setEtat($this->etatsRep->find(self::CLOTUREE));
@@ -90,11 +87,27 @@ class SortieService
      * @param $sortie
      * @param EntityManagerInterface $em
      */
-    public function historisationSortiesFiniesDepuisPlusDUnMois($sortie, EntityManagerInterface $em): void
+    public function verifEnCours(Sortie $sortie, EntityManagerInterface $em): void
+    {
+        if ($sortie->getEtat()->getId() == self::CLOTUREE && ($sortie->getDateHeureDebut()->getTimestamp() < (new \DateTime)->getTimestamp())) {
+            $sortie->setEtat($this->etatsRep->find(self::EN_COURS));
+            $em->persist($sortie);
+            $em->flush();
+        }
+    }
+
+
+
+    /**
+     * @param $sortie
+     * @param EntityManagerInterface $em
+     */
+    public function historisationSortiesFiniesDepuisPlusDUnMois(Sortie $sortie, EntityManagerInterface $em): void
     {
         $debutSortie = $sortie->getDateHeureDebut()->getTimestamp();
         $finSortie = $debutSortie + ($sortie->getDuree() * 1000 * 60);
         $unMoisTimestamp = 60 * 60 * 24 * 30 * 1000;
+        //dump($)
         if ((new \DateTime)->getTimestamp() - $finSortie > $unMoisTimestamp) {
             $sortie->setEtat(self::PASSEE);
             $em->persist($sortie);
@@ -104,14 +117,18 @@ class SortieService
 
     /**
      * @param $sortie
-     * @param EntityManagerInterface $em
+     * @param $em
      */
-    public function verifEnCours($sortie, EntityManagerInterface $em): void
+    public function verifPassees(Sortie $sortie, EntityManagerInterface $em): void
     {
-        if ($sortie->getEtat()->getId() == self::CLOTUREE && ($sortie->getDateHeureDebut()->getTimestamp() > (new \DateTime)->getTimestamp())) {
-            $sortie->setEtat($this->etatsRep->find(self::EN_COURS));
+        $debutSortie = $sortie->getDateHeureDebut()->getTimestamp();
+        $finSortie = $debutSortie + ($sortie->getDuree() * 1000 * 60);
+        if ((new \DateTime)->getTimestamp() > $finSortie) {
+            $sortie->setEtat($this->etatsRep->find(self::PASSEE));
             $em->persist($sortie);
             $em->flush();
         }
     }
+
+
 }

@@ -19,6 +19,11 @@
             font-variant: small-caps;
             font-size: 1.2em;
             letter-spacing: 1px;
+            text-align: center;
+        }
+
+        #__container table tr td:last-child {
+            text-align: center;
         }
 
         #__container table a {
@@ -27,12 +32,19 @@
 
         #__container table a:hover {
             text-decoration:underline;
-            text-decoration-style: wavy;
         }
 
-        .btn-outline-info {
+        .btn-info:first-child, .btn-outline-danger:first-child, .btn-secondary:first-child {
+            margin-top: initial;
+        }
+
+        .btn-info, .btn-outline-danger, .btn-secondary {
             border-width: 2px;
-            font-weight: bold;
+            letter-spacing: 1pt;
+            min-width: 8rem;
+            max-width: 8rem;
+            width: 8rem;
+            margin-top: 1rem;
         }
 
         .filter-type input, .filter-type select {
@@ -79,6 +91,7 @@
                     <th>Ville</th>
                     <th>Durée</th>
                     <th>Date limite d'inscription</th>
+                    <th>Places restantes</th>
                     <th>S'inscrire</th>
                 </tr>
             </thead>
@@ -93,16 +106,24 @@
                     <td>{{ sortie.lieu.ville.nom }}</td>
                     <td>{{ sortie.duree }} minutes</td>
                     <td>avant le {{ sortie.dateLimiteInscription | date('d/m/Y') }}</td>
+                    <td>{% set placesRest = sortie.nbInscriptionsMax - sortie.participants.count %}{{ placesRest }} sur {{ sortie.nbInscriptionsMax }}</td>
                     <td>
                         {% if sortie.orga.id != app.user.id %}
-                            <a href="{{ path('sortied_subscribe', {id: sortie.id}) }}" class="btn btn-outline-info">S'inscrire !</a>
+                            <a href="{{ path('sortied_subscribe', {id: sortie.id}) }}" class="btn btn-info">S'inscrire !</a>
+                        {% endif %}
+                        {% if sortie.orga.id == app.user.id %}
+                            <a href="{{ path('sortied_details', {id: sortie.id}) }}" class="btn btn-secondary">Consulter</a><br>
+                            <a href="{{ path('sortied_ask_cancel', {id: sortie.id}) }}" class="btn btn-outline-danger">Annuler</a>
+                        {% endif %}
+                        {% if sortie.participants.contains(app.user) %}
+                            <a href="{{ path('sortied_cancel_subscription', {id: sortie.id}) }}" class="btn btn-outline-danger">Annuler ma participation</a>
                         {% endif %}
                     </td>
                 </tr>
             {% endfor %}
             </tbody>
         </table>
-        <a href="{{ path('sortied_creer') }}" class="btn btn-outline-info col-1">Proposer une nouvelle sortie</a>
+        <a href="{{ path('sortied_creer') }}" class="btn btn-outline-info col-3 mb-3">Proposer une nouvelle sortie</a>
     </div>
 {% endblock %}
 
