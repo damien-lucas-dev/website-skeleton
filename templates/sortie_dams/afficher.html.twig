@@ -30,6 +30,16 @@
             text-decoration-style: wavy;
         }
 
+        .btn-outline-info {
+            border-width: 2px;
+            font-weight: bold;
+        }
+
+        .filter-type input, .filter-type select {
+            max-width: 30%;
+        }
+
+
 
     </style>
 {% endblock %}
@@ -37,7 +47,27 @@
 {% block body %}
     <h1>😎 Qu'allez vous faire ce week-end ? <s>(ou cette semaine 😁)</s></h1>
 
+
     <div id="__container" class="container">
+        <div class="filter-type">
+            <div class="row">
+                {{ form_start(form) }}
+                <div class="col">
+                    {{ form_row(form.keyword) }}
+                    {# form_row(form.start) #}
+
+                </div>
+                <div class="col">
+                    {{ form_row(form.lieu) }}
+                    {{ form_row(form.owner) }}
+                    {{ form_row(form.subscribed) }}
+                    {{ form_row(form.passed) }}
+                    {{ form_row(form.cancelled) }}
+                    {{ form_row(form.submit) }}
+                </div>
+                {{ form_end(form) }}
+            </div>
+        </div>
         <table class="table table-bordered table-hover table-striped">
             <thead>
                 <tr>

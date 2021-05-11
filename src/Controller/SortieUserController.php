@@ -2,7 +2,9 @@
 
 namespace App\Controller;
 
+use App\Entity\PropertySearch;
 use App\Entity\Sortie;
+use App\Form\FilterType;
 use App\Form\SortieType;
 use App\Service\SortieService;
 use Doctrine\ORM\EntityManager;
@@ -23,27 +25,29 @@ use Symfony\Component\Serializer\Encoder\JsonEncoder;
  */
 class SortieUserController extends AbstractController
 {
-     /**
-     * @Route("/", name="sortied")
-     */
-    public function index(): Response
-    {
-
-        return $this->render('sortie_dams/index.html.twig', [
-            'controller_name' => 'SortieUserController',
-        ]);
-    }
-
     /**
      * @Route("/afficher", name="sortied_afficher")
      */
-    public function afficher(): Response
+    public function afficher(Request $request): Response
     {
+        $search = new PropertySearch();
+        $form = $this->createForm(FilterType::class, $search);
+        $form->handleRequest($request);
+
         $em = $this->getDoctrine()->getManager();
         $sortieRepos = $em->getRepository(Sortie::class);
         $listeSorties = $sortieRepos->findAll();
 
+        if ($form->isSubmitted() && $form->isValid()) {
+            dump($request->get('filter'));
+            $filters = $request->get('filter');
+
+            $listeSorties = $sortieRepos->findByFilter($filters, $this->getUser()->getId());
+        }
+
         return $this->render('sortie_dams/afficher.html.twig', [
+            'form' => $form->createView(),
+            'search' => $search,
             'listeSorties' => $listeSorties
         ]);
     }
@@ -82,7 +86,7 @@ class SortieUserController extends AbstractController
             // comme vérifier si il reste des places disponibles par exemple
 
             $sortie->setOrga($this->getUser());
-            $sortie->setLieu($this->getEntitiesFromIds($form, $em));
+            //$sortie->setLieu($this->getEntitiesFromIds($form, $em));
             $sortie->setEtat($entityManager->getRepository('App:Etat')->find(SortieService::OUVERTE));
 
             $entityManager = $this->getDoctrine()->getManager();
@@ -132,7 +136,7 @@ class SortieUserController extends AbstractController
 
         if ($nbPlacesRestantes > 0) {
             if (! $sortie->getParticipants()->contains($this->getUser())) {
-                if ($sortie->getDateLimiteInscription() < new \DateTime()) {
+                if ($sortie->getDateLimiteInscription() > new \DateTime()) {
                     $ok = 'ok';
                     dump($ok);
                     $sortie->addParticipant($this->getUser());
@@ -203,7 +207,7 @@ class SortieUserController extends AbstractController
     }
 
     /**
-     * @Route("/cancel/subscription/{id}" name="sortied_cancel_subscription")
+     * @Route("/cancel/subscription/{id}", name="sortied_cancel_subscription")
      */
     public function cancelSubscription(int $id, EntityManagerInterface $em): Response
     {

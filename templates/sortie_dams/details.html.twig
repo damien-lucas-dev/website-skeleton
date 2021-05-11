@@ -54,8 +54,12 @@ Détails
                 {% endif %}
             </table>
         </div>
+        <div class="card m-3 col-3">
+            <div class="card-header"><h4>Description de la sortie</h4></div>
+            <div class="card-body">{{ sortie.infosSortie }}</div>
+        </div>
         <div class="col">
-            <table id="__tb-particip" class="table">
+            <table id="__tb-particip" class="table table-striped table-dark">
                 <thead>
                     <h4 style="font-variant: small-caps">Participants</h4>
                 </thead>

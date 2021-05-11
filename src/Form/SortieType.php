@@ -46,7 +46,7 @@ class SortieType extends AbstractType
                 'attr' => ['class' => 'form-control']
             ])
             ->add('dateLimiteInscription', DateType::class, [
-                'label' => 'Date et heure de fin',
+                'label' => 'Date limite pour s\'inscrire',
                 'data' => new \DateTime(),
                 'attr' => ['class' => 'form-control']
             ])
@@ -75,16 +75,16 @@ class SortieType extends AbstractType
                 'attr' => ['class' => 'form-control']
             ])
             /* @helps-a-lot https://grafikart.fr/tutoriels/champs-imbriques-888  */
-            ->add('ville', EntityType::class, [
+            /*->add('ville', EntityType::class, [
                 'class' => Ville::class,
                 'choice_label' => 'nom',
                 'placeholder' => 'Sélectionnez une ville',
                 'mapped' => false,
                 'required' => false
-            ])
-            ->add('lieu', ChoiceType::class, [
-            'choices' => [],
-            'mapped' => false,
+            ])*/
+            ->add('lieu', EntityType::class, [
+            'class' => Lieu::class,
+            'choice_label' => 'nom',
         ]);
     }
 
