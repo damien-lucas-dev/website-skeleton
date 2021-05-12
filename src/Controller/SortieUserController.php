@@ -261,7 +261,8 @@ class SortieUserController extends AbstractController
                     $this->addFlash('error', 'Impossible d\'annuler une sortie qui ne soit plus ouverte à l\'inscription');
             }
         }
-        else {
+        else
+        {
             $this->addFlash('error', 'Impossible d\'annuler une sortie dont vous n\'êtes pas l\'organisateur');
         }
 
